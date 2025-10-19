@@ -5,6 +5,8 @@ Supports all model types from Project 4.1 and 4.2.
 
 import argparse
 import os
+import random
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -64,8 +66,21 @@ def get_args():
                         help='Path to checkpoint to resume from')
     parser.add_argument('--eval_only', action='store_true',
                         help='Only evaluate model')
+    parser.add_argument('--seed', type=int, default=42,
+                        help='Random seed for reproducibility')
 
     return parser.parse_args()
+
+
+def set_seed(seed):
+    """Set random seed for reproducibility."""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # For deterministic behavior (may impact performance)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def get_model(args):
@@ -268,6 +283,10 @@ def validate(model, dataloader, criterion, device, args):
 
 def main():
     args = get_args()
+
+    # Set random seed for reproducibility
+    set_seed(args.seed)
+    print(f"Random seed set to: {args.seed}")
 
     # Device
     if torch.cuda.is_available():
