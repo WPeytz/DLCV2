@@ -1,21 +1,76 @@
 """
 Training script for video classification models.
 Supports all model types from Project 4.1 and 4.2.
+Now includes deterministic seeding across Python, NumPy, PyTorch, CUDA, and DataLoader workers.
 """
 
 import argparse
 import os
+import random
+import json
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms as T
 from tqdm import tqdm
-import json
 
 from datasets import FrameImageDataset, FrameVideoDataset
 from models import PerFrameCNN, LateFusionCNN, EarlyFusionCNN, CNN3D, DualStreamNetwork
 from utils import AverageMeter, accuracy, save_checkpoint, load_checkpoint
+
+
+# ---------------------- Seeding utilities ---------------------- #
+def set_global_seed(seed: int, deterministic: bool = True) -> torch.Generator:
+    """
+    Set seeds for Python, NumPy, and PyTorch. Optionally enable deterministic
+    algorithms in PyTorch/CUDA. Returns a torch.Generator you can feed to
+    DataLoader (for reproducible shuffling).
+    """
+    # For Python hashing and stdlib random
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    random.seed(seed)
+
+    # NumPy
+    np.random.seed(seed)
+
+    # PyTorch (CPU + CUDA)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    # cudnn / deterministic kernels
+    if deterministic:
+        # Disables convolution autotuner for determinism
+        torch.backends.cudnn.benchmark = False
+        try:
+            torch.use_deterministic_algorithms(True, warn_only=True)
+        except Exception:
+            # Older PyTorch versions won't have this; safe to ignore.
+            pass
+
+        # Helps cuBLAS use deterministic paths on some ops
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
+    # Generator for DataLoader shuffling
+    g = torch.Generator()
+    g.manual_seed(seed)
+    return g
+
+
+def make_worker_init_fn(base_seed: int):
+    """
+    Returns a worker_init_fn that seeds Python/NumPy for each worker process
+    based on the worker's initial torch seed (derived from base_seed), so
+    workers are deterministic but not identical to each other.
+    """
+    def _init_fn(worker_id: int):
+        worker_seed = (torch.initial_seed() + worker_id) % (2**32)
+        np.random.seed(worker_seed)
+        random.seed(worker_seed)
+    return _init_fn
+# --------------------------------------------------------------- #
 
 
 def get_args():
@@ -56,6 +111,12 @@ def get_args():
                         help='Weight decay')
     parser.add_argument('--num_workers', type=int, default=4,
                         help='Number of data loading workers')
+
+    # Reproducibility parameters
+    parser.add_argument('--seed', type=int, default=42,
+                        help='Global random seed')
+    parser.add_argument('--deterministic', action='store_true',
+                        help='Use deterministic algorithms (may reduce speed)')
 
     # Other parameters
     parser.add_argument('--checkpoint_dir', type=str, default='checkpoints',
@@ -108,7 +169,7 @@ def get_model(args):
     return model
 
 
-def get_dataloaders(args):
+def get_dataloaders(args, dl_generator: torch.Generator):
     """Create train and validation dataloaders."""
 
     # Data transforms
@@ -158,12 +219,17 @@ def get_dataloaders(args):
             load_optical_flow=load_flow
         )
 
+    worker_init_fn = make_worker_init_fn(args.seed)
+
     train_loader = DataLoader(
         train_dataset,
         batch_size=args.batch_size,
         shuffle=True,
         num_workers=args.num_workers,
-        pin_memory=True
+        pin_memory=True,
+        generator=dl_generator,            # deterministic shuffling
+        worker_init_fn=worker_init_fn,     # per-worker seeding
+        persistent_workers=args.num_workers > 0
     )
 
     val_loader = DataLoader(
@@ -171,7 +237,9 @@ def get_dataloaders(args):
         batch_size=args.batch_size,
         shuffle=False,
         num_workers=args.num_workers,
-        pin_memory=True
+        pin_memory=True,
+        worker_init_fn=worker_init_fn,     # keeps NumPy/random deterministic in workers
+        persistent_workers=args.num_workers > 0
     )
 
     return train_loader, val_loader
@@ -190,27 +258,27 @@ def train_epoch(model, dataloader, criterion, optimizer, device, args):
         if args.model == 'dualstream':
             # Dual-stream model needs RGB and flow
             data = batch
-            rgb = data['frames'].to(device)
-            flow = data['flow'].to(device)
-            labels = data['label'].to(device)
+            rgb = data['frames'].to(device, non_blocking=True)
+            flow = data['flow'].to(device, non_blocking=True)
+            labels = data['label'].to(device, non_blocking=True)
 
             outputs = model(rgb, flow)
         else:
             # Other models
             if isinstance(batch, dict):
-                inputs = batch['frames'].to(device)
-                labels = batch['label'].to(device)
+                inputs = batch['frames'].to(device, non_blocking=True)
+                labels = batch['label'].to(device, non_blocking=True)
             else:
                 inputs, labels = batch
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                inputs = inputs.to(device, non_blocking=True)
+                labels = labels.to(device, non_blocking=True)
 
             outputs = model(inputs)
 
         loss = criterion(outputs, labels)
 
         # Backpropagation
-        optimizer.zero_grad()
+        optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
 
@@ -238,19 +306,19 @@ def validate(model, dataloader, criterion, device, args):
         for batch in pbar:
             if args.model == 'dualstream':
                 data = batch
-                rgb = data['frames'].to(device)
-                flow = data['flow'].to(device)
-                labels = data['label'].to(device)
+                rgb = data['frames'].to(device, non_blocking=True)
+                flow = data['flow'].to(device, non_blocking=True)
+                labels = data['label'].to(device, non_blocking=True)
 
                 outputs = model(rgb, flow)
             else:
                 if isinstance(batch, dict):
-                    inputs = batch['frames'].to(device)
-                    labels = batch['label'].to(device)
+                    inputs = batch['frames'].to(device, non_blocking=True)
+                    labels = batch['label'].to(device, non_blocking=True)
                 else:
                     inputs, labels = batch
-                    inputs = inputs.to(device)
-                    labels = labels.to(device)
+                    inputs = inputs.to(device, non_blocking=True)
+                    labels = labels.to(device, non_blocking=True)
 
                 outputs = model(inputs)
 
@@ -268,6 +336,10 @@ def validate(model, dataloader, criterion, device, args):
 
 def main():
     args = get_args()
+
+    # Set global seed & determinism; get a DL generator for shuffling
+    dl_generator = set_global_seed(args.seed, deterministic=args.deterministic)
+    print(f"[seed] Using seed={args.seed} deterministic={bool(args.deterministic)}")
 
     # Device
     if torch.cuda.is_available():
@@ -303,7 +375,7 @@ def main():
         print(f"Resumed from epoch {start_epoch}")
 
     # Data loaders
-    train_loader, val_loader = get_dataloaders(args)
+    train_loader, val_loader = get_dataloaders(args, dl_generator)
     print(f"Train samples: {len(train_loader.dataset)}, Val samples: {len(val_loader.dataset)}")
 
     # Evaluation only
