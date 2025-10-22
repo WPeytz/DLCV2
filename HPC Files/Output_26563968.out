@@ -1,0 +1,607 @@
+=== Job started on n-62-18-13 at Sun Oct 19 19:15:57 CEST 2025 ===
+Working directory: /zhome/e8/8/167932
+PWD: /zhome/e8/8/167932/DLCV2
+Python: /zhome/e8/8/167932/myproject/.venv/bin/python
+Python 3.9.19
+[sitecustomize] Global seed set to 42
+[seed] Using seed=42 deterministic=False
+Using device: cuda
+Model: perframe
+Train samples: 5000, Val samples: 1200
+
+Epoch 1/100
+Train Loss: 0.6752, Train Acc: 77.76%
+Val Loss: 0.6285, Val Acc: 77.83%
+Learning Rate: 0.001000
+
+Epoch 2/100
+Train Loss: 0.2135, Train Acc: 93.38%
+Val Loss: 0.5438, Val Acc: 85.83%
+Learning Rate: 0.001000
+
+Epoch 3/100
+Train Loss: 0.1292, Train Acc: 96.08%
+Val Loss: 0.5856, Val Acc: 88.67%
+Learning Rate: 0.001000
+
+Epoch 4/100
+Train Loss: 0.1727, Train Acc: 94.34%
+Val Loss: 0.4512, Val Acc: 88.17%
+Learning Rate: 0.001000
+
+Epoch 5/100
+Train Loss: 0.0863, Train Acc: 97.16%
+Val Loss: 0.3721, Val Acc: 90.92%
+Learning Rate: 0.001000
+
+Epoch 6/100
+Train Loss: 0.0682, Train Acc: 98.00%
+Val Loss: 0.5393, Val Acc: 88.75%
+Learning Rate: 0.001000
+
+Epoch 7/100
+Train Loss: 0.1477, Train Acc: 95.06%
+Val Loss: 0.4081, Val Acc: 90.42%
+Learning Rate: 0.001000
+
+Epoch 8/100
+Train Loss: 0.0546, Train Acc: 98.36%
+Val Loss: 0.2775, Val Acc: 93.17%
+Learning Rate: 0.001000
+
+Epoch 9/100
+Train Loss: 0.0426, Train Acc: 98.78%
+Val Loss: 0.9431, Val Acc: 82.58%
+Learning Rate: 0.001000
+
+Epoch 10/100
+Train Loss: 0.1447, Train Acc: 95.10%
+Val Loss: 0.8391, Val Acc: 82.00%
+Learning Rate: 0.001000
+
+Epoch 11/100
+Train Loss: 0.0395, Train Acc: 98.82%
+Val Loss: 0.3098, Val Acc: 92.42%
+Learning Rate: 0.001000
+
+Epoch 12/100
+Train Loss: 0.0910, Train Acc: 97.00%
+Val Loss: 0.6197, Val Acc: 87.83%
+Learning Rate: 0.001000
+
+Epoch 13/100
+Train Loss: 0.0704, Train Acc: 97.80%
+Val Loss: 0.4781, Val Acc: 90.17%
+Learning Rate: 0.001000
+
+Epoch 14/100
+Train Loss: 0.0704, Train Acc: 98.00%
+Val Loss: 0.5639, Val Acc: 88.50%
+Learning Rate: 0.000500
+
+Epoch 15/100
+Train Loss: 0.0129, Train Acc: 99.66%
+Val Loss: 0.4686, Val Acc: 92.17%
+Learning Rate: 0.000500
+
+Epoch 16/100
+Train Loss: 0.0028, Train Acc: 99.96%
+Val Loss: 0.4282, Val Acc: 92.58%
+Learning Rate: 0.000500
+
+Epoch 17/100
+Train Loss: 0.0035, Train Acc: 99.92%
+Val Loss: 0.4519, Val Acc: 91.42%
+Learning Rate: 0.000500
+
+Epoch 18/100
+Train Loss: 0.0144, Train Acc: 99.70%
+Val Loss: 0.3746, Val Acc: 91.17%
+Learning Rate: 0.000500
+
+Epoch 19/100
+Train Loss: 0.0074, Train Acc: 99.80%
+Val Loss: 0.5193, Val Acc: 89.33%
+Learning Rate: 0.000500
+
+Epoch 20/100
+Train Loss: 0.0412, Train Acc: 98.78%
+Val Loss: 0.4100, Val Acc: 91.75%
+Learning Rate: 0.000250
+
+Epoch 21/100
+Train Loss: 0.0051, Train Acc: 99.92%
+Val Loss: 0.3631, Val Acc: 93.50%
+Learning Rate: 0.000250
+
+Epoch 22/100
+Train Loss: 0.0020, Train Acc: 99.98%
+Val Loss: 0.3733, Val Acc: 92.75%
+Learning Rate: 0.000250
+
+Epoch 23/100
+Train Loss: 0.0019, Train Acc: 99.96%
+Val Loss: 0.3320, Val Acc: 92.92%
+Learning Rate: 0.000250
+
+Epoch 24/100
+Train Loss: 0.0013, Train Acc: 100.00%
+Val Loss: 0.3510, Val Acc: 92.83%
+Learning Rate: 0.000250
+
+Epoch 25/100
+Train Loss: 0.0019, Train Acc: 99.96%
+Val Loss: 0.3410, Val Acc: 93.42%
+Learning Rate: 0.000250
+
+Epoch 26/100
+Train Loss: 0.0009, Train Acc: 100.00%
+Val Loss: 0.3820, Val Acc: 92.33%
+Learning Rate: 0.000250
+
+Epoch 27/100
+Train Loss: 0.0284, Train Acc: 99.08%
+Val Loss: 0.3840, Val Acc: 92.33%
+Learning Rate: 0.000125
+
+Epoch 28/100
+Train Loss: 0.0033, Train Acc: 99.96%
+Val Loss: 0.3435, Val Acc: 92.50%
+Learning Rate: 0.000125
+
+Epoch 29/100
+Train Loss: 0.0021, Train Acc: 99.94%
+Val Loss: 0.3495, Val Acc: 92.67%
+Learning Rate: 0.000125
+
+Epoch 30/100
+Train Loss: 0.0018, Train Acc: 99.94%
+Val Loss: 0.3483, Val Acc: 92.75%
+Learning Rate: 0.000125
+
+Epoch 31/100
+Train Loss: 0.0016, Train Acc: 100.00%
+Val Loss: 0.3159, Val Acc: 92.83%
+Learning Rate: 0.000125
+
+Epoch 32/100
+Train Loss: 0.0012, Train Acc: 100.00%
+Val Loss: 0.3046, Val Acc: 93.00%
+Learning Rate: 0.000125
+
+Epoch 33/100
+Train Loss: 0.0009, Train Acc: 100.00%
+Val Loss: 0.3383, Val Acc: 93.17%
+Learning Rate: 0.000063
+
+Epoch 34/100
+Train Loss: 0.0009, Train Acc: 100.00%
+Val Loss: 0.3289, Val Acc: 93.00%
+Learning Rate: 0.000063
+
+Epoch 35/100
+Train Loss: 0.0009, Train Acc: 99.98%
+Val Loss: 0.3235, Val Acc: 93.42%
+Learning Rate: 0.000063
+
+Epoch 36/100
+Train Loss: 0.0008, Train Acc: 100.00%
+Val Loss: 0.3636, Val Acc: 93.17%
+Learning Rate: 0.000063
+
+Epoch 37/100
+Train Loss: 0.0006, Train Acc: 100.00%
+Val Loss: 0.3398, Val Acc: 92.92%
+Learning Rate: 0.000063
+
+Epoch 38/100
+Train Loss: 0.0017, Train Acc: 99.96%
+Val Loss: 0.2967, Val Acc: 93.25%
+Learning Rate: 0.000063
+
+Epoch 39/100
+Train Loss: 0.0018, Train Acc: 99.94%
+Val Loss: 0.3358, Val Acc: 92.42%
+Learning Rate: 0.000031
+
+Epoch 40/100
+Train Loss: 0.0008, Train Acc: 100.00%
+Val Loss: 0.3275, Val Acc: 92.50%
+Learning Rate: 0.000031
+
+Epoch 41/100
+Train Loss: 0.0007, Train Acc: 100.00%
+Val Loss: 0.3206, Val Acc: 92.33%
+Learning Rate: 0.000031
+
+Epoch 42/100
+Train Loss: 0.0007, Train Acc: 100.00%
+Val Loss: 0.3119, Val Acc: 92.75%
+Learning Rate: 0.000031
+
+Epoch 43/100
+Train Loss: 0.0009, Train Acc: 100.00%
+Val Loss: 0.3207, Val Acc: 92.75%
+Learning Rate: 0.000031
+
+Epoch 44/100
+Train Loss: 0.0005, Train Acc: 100.00%
+Val Loss: 0.3196, Val Acc: 92.92%
+Learning Rate: 0.000031
+
+Epoch 45/100
+Train Loss: 0.0004, Train Acc: 100.00%
+Val Loss: 0.3172, Val Acc: 92.50%
+Learning Rate: 0.000016
+
+Epoch 46/100
+Train Loss: 0.0006, Train Acc: 100.00%
+Val Loss: 0.3147, Val Acc: 92.67%
+Learning Rate: 0.000016
+
+Epoch 47/100
+Train Loss: 0.0007, Train Acc: 100.00%
+Val Loss: 0.3401, Val Acc: 92.92%
+Learning Rate: 0.000016
+
+Epoch 48/100
+Train Loss: 0.0006, Train Acc: 99.98%
+Val Loss: 0.3555, Val Acc: 93.25%
+Learning Rate: 0.000016
+
+Epoch 49/100
+Train Loss: 0.0005, Train Acc: 100.00%
+Val Loss: 0.3321, Val Acc: 93.08%
+Learning Rate: 0.000016
+
+Epoch 50/100
+Train Loss: 0.0005, Train Acc: 100.00%
+Val Loss: 0.3399, Val Acc: 92.83%
+Learning Rate: 0.000016
+
+Epoch 51/100
+Train Loss: 0.0005, Train Acc: 100.00%
+Val Loss: 0.3384, Val Acc: 93.00%
+Learning Rate: 0.000008
+
+Epoch 52/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3338, Val Acc: 92.83%
+Learning Rate: 0.000008
+
+Epoch 53/100
+Train Loss: 0.0006, Train Acc: 100.00%
+Val Loss: 0.3267, Val Acc: 93.00%
+Learning Rate: 0.000008
+
+Epoch 54/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3221, Val Acc: 92.92%
+Learning Rate: 0.000008
+
+Epoch 55/100
+Train Loss: 0.0004, Train Acc: 100.00%
+Val Loss: 0.3374, Val Acc: 93.08%
+Learning Rate: 0.000008
+
+Epoch 56/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3437, Val Acc: 92.75%
+Learning Rate: 0.000008
+
+Epoch 57/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3579, Val Acc: 93.00%
+Learning Rate: 0.000004
+
+Epoch 58/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3261, Val Acc: 93.00%
+Learning Rate: 0.000004
+
+Epoch 59/100
+Train Loss: 0.0006, Train Acc: 100.00%
+Val Loss: 0.3193, Val Acc: 92.92%
+Learning Rate: 0.000004
+
+Epoch 60/100
+Train Loss: 0.0005, Train Acc: 99.98%
+Val Loss: 0.3156, Val Acc: 93.08%
+Learning Rate: 0.000004
+
+Epoch 61/100
+Train Loss: 0.0006, Train Acc: 99.98%
+Val Loss: 0.3169, Val Acc: 92.83%
+Learning Rate: 0.000004
+
+Epoch 62/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3244, Val Acc: 93.08%
+Learning Rate: 0.000004
+
+Epoch 63/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3142, Val Acc: 93.08%
+Learning Rate: 0.000002
+
+Epoch 64/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3344, Val Acc: 93.17%
+Learning Rate: 0.000002
+
+Epoch 65/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3295, Val Acc: 92.58%
+Learning Rate: 0.000002
+
+Epoch 66/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3393, Val Acc: 92.67%
+Learning Rate: 0.000002
+
+Epoch 67/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3307, Val Acc: 92.75%
+Learning Rate: 0.000002
+
+Epoch 68/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3376, Val Acc: 92.75%
+Learning Rate: 0.000002
+
+Epoch 69/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3329, Val Acc: 92.75%
+Learning Rate: 0.000001
+
+Epoch 70/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3240, Val Acc: 92.92%
+Learning Rate: 0.000001
+
+Epoch 71/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3295, Val Acc: 93.00%
+Learning Rate: 0.000001
+
+Epoch 72/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3318, Val Acc: 92.92%
+Learning Rate: 0.000001
+
+Epoch 73/100
+Train Loss: 0.0005, Train Acc: 100.00%
+Val Loss: 0.3399, Val Acc: 93.00%
+Learning Rate: 0.000001
+
+Epoch 74/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3199, Val Acc: 93.00%
+Learning Rate: 0.000001
+
+Epoch 75/100
+Train Loss: 0.0002, Train Acc: 100.00%
+Val Loss: 0.3265, Val Acc: 93.08%
+Learning Rate: 0.000000
+
+Epoch 76/100
+Train Loss: 0.0002, Train Acc: 100.00%
+Val Loss: 0.3310, Val Acc: 93.00%
+Learning Rate: 0.000000
+
+Epoch 77/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3483, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 78/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3290, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 79/100
+Train Loss: 0.0004, Train Acc: 100.00%
+Val Loss: 0.3250, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 80/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3428, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 81/100
+Train Loss: 0.0007, Train Acc: 99.98%
+Val Loss: 0.3420, Val Acc: 92.67%
+Learning Rate: 0.000000
+
+Epoch 82/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3291, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 83/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3287, Val Acc: 92.83%
+Learning Rate: 0.000000
+
+Epoch 84/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3297, Val Acc: 92.67%
+Learning Rate: 0.000000
+
+Epoch 85/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3227, Val Acc: 93.00%
+Learning Rate: 0.000000
+
+Epoch 86/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3271, Val Acc: 93.17%
+Learning Rate: 0.000000
+
+Epoch 87/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3318, Val Acc: 93.00%
+Learning Rate: 0.000000
+
+Epoch 88/100
+Train Loss: 0.0004, Train Acc: 100.00%
+Val Loss: 0.3282, Val Acc: 92.75%
+Learning Rate: 0.000000
+
+Epoch 89/100
+Train Loss: 0.0004, Train Acc: 100.00%
+Val Loss: 0.3487, Val Acc: 92.83%
+Learning Rate: 0.000000
+
+Epoch 90/100
+Train Loss: 0.0005, Train Acc: 100.00%
+Val Loss: 0.3160, Val Acc: 93.00%
+Learning Rate: 0.000000
+
+Epoch 91/100
+Train Loss: 0.0002, Train Acc: 100.00%
+Val Loss: 0.3529, Val Acc: 92.67%
+Learning Rate: 0.000000
+
+Epoch 92/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3490, Val Acc: 92.67%
+Learning Rate: 0.000000
+
+Epoch 93/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3150, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 94/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3299, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 95/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3205, Val Acc: 93.08%
+Learning Rate: 0.000000
+
+Epoch 96/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3345, Val Acc: 92.75%
+Learning Rate: 0.000000
+
+Epoch 97/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3554, Val Acc: 92.67%
+Learning Rate: 0.000000
+
+Epoch 98/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3301, Val Acc: 92.92%
+Learning Rate: 0.000000
+
+Epoch 99/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3335, Val Acc: 92.75%
+Learning Rate: 0.000000
+
+Epoch 100/100
+Train Loss: 0.0003, Train Acc: 100.00%
+Val Loss: 0.3304, Val Acc: 93.17%
+Learning Rate: 0.000000
+
+Training completed! Best validation accuracy: 93.50%
+=== Job finished at Sun Oct 19 19:47:58 CEST 2025 ===
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@hpc.dtu.dk>
+Subject: Job 26563968: <Test> in cluster <dcc> Done
+
+Job <Test> was submitted from host <hpclogin1> by user <s214618> in cluster <dcc> at Sun Oct 19 17:18:19 2025
+Job was executed on host(s) <4*n-62-18-13>, in queue <c02516>, as user <s214618> in cluster <dcc> at Sun Oct 19 19:15:55 2025
+</zhome/e8/8/167932> was used as the home directory.
+</zhome/e8/8/167932> was used as the working directory.
+Started at Sun Oct 19 19:15:55 2025
+Terminated at Sun Oct 19 19:47:58 2025
+Results reported at Sun Oct 19 19:47:58 2025
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/bash
+#BSUB -q c02516
+#BSUB -J Test
+#BSUB -gpu "num=1:mode=exclusive_process"
+#BSUB -n 4
+#BSUB -R "span[hosts=1]"
+#BSUB -R "rusage[mem=8GB]"
+#BSUB -W 08:00
+#BSUB -o Output_%J.out
+#BSUB -e Output_%J.err
+
+set -euo pipefail
+
+echo "=== Job started on $(hostname) at $(date) ==="
+echo "Working directory: $(pwd)"
+
+module load python3/3.9.19
+module load cuda/11.8
+
+# Activate your virtual environment
+source ~/myproject/.venv/bin/activate || { echo "venv activation failed"; exit 1; }
+
+# Go to your code folder (ABSOLUTE PATH!)
+cd /zhome/e8/8/167932/DLCV2 || { echo "cd failed"; exit 1; }
+
+echo "PWD: $(pwd)"
+echo "Python: $(which python)"
+python -V
+
+# --- Global reproducibility knobs ---
+export SEED=42
+export PYTHONHASHSEED="$SEED"
+
+# For PyTorch+CUDA determinism (safe for CUDA 11.8). No-op if PyTorch isn't used.
+export CUBLAS_WORKSPACE_CONFIG=":4096:8"
+
+# (Optional) If you might use TensorFlow in some scripts:
+export TF_DETERMINISTIC_OPS=1
+
+# Install a sitecustomize hook into the active venv so ALL python invocations get seeded.
+SITEPKG="$(python -c 'import site; print(next(p for p in (getattr(site, "getsitepackages", lambda: [])() or []) if p.endswith("site-packages")) or site.getusersitepackages())')"
+mkdir -p "$SITEPKG"
+cat > "$SITEPKG/sitecustomize.py" << 'PY'
+import os, random
+SEED = int(os.environ.get("SEED", "42"))
+
+# Ensure Python's hash randomization is deterministic too (affects dict/set iteration order).
+os.environ.setdefault("PYTHONHASHSEED", str(SEED))
+
+# Standard library
+
+(... more ...)
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   5197.86 sec.
+    Max Memory :                                 1549 MB
+    Average Memory :                             1377.13 MB
+    Total Requested Memory :                     32768.00 MB
+    Delta Memory :                               31219.00 MB
+    Max Swap :                                   -
+    Max Processes :                              12
+    Max Threads :                                43
+    Run time :                                   1924 sec.
+    Turnaround time :                            8979 sec.
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <Output_26563968.err> for stderr output of this job.
+
