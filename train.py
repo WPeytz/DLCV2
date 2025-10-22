@@ -16,7 +16,8 @@ from tqdm import tqdm
 import json
 
 from datasets import FrameImageDataset, FrameVideoDataset
-from models import PerFrameCNN, LateFusionCNN, EarlyFusionCNN, CNN3D, DualStreamNetwork
+from models import (PerFrameCNN, LateFusionCNN, EarlyFusionCNN, CNN3D,
+                    PerFrame3D, LateFusion3D, DualStreamNetwork)
 from utils import AverageMeter, accuracy, save_checkpoint, load_checkpoint
 
 
@@ -33,7 +34,8 @@ def get_args():
 
     # Model parameters
     parser.add_argument('--model', type=str, default='perframe',
-                        choices=['perframe', 'latefusion', 'earlyfusion', '3dcnn', 'dualstream'],
+                        choices=['perframe', 'latefusion', 'earlyfusion', '3dcnn',
+                                 'perframe3d', 'latefusion3d', 'dualstream'],
                         help='Model architecture')
     parser.add_argument('--backbone', type=str, default='resnet18',
                         choices=['resnet18', 'resnet50'],
@@ -46,6 +48,10 @@ def get_args():
     parser.add_argument('--fusion', type=str, default='mean',
                         choices=['mean', 'concat', 'late'],
                         help='Fusion method for fusion models')
+    parser.add_argument('--clip_size', type=int, default=3,
+                        help='Clip size for PerFrame3D model')
+    parser.add_argument('--num_segments', type=int, default=3,
+                        help='Number of segments for LateFusion3D model')
 
     # Training parameters
     parser.add_argument('--batch_size', type=int, default=16,
@@ -66,6 +72,9 @@ def get_args():
                         help='Path to checkpoint to resume from')
     parser.add_argument('--eval_only', action='store_true',
                         help='Only evaluate model')
+    parser.add_argument('--eval_split', type=str, default='val',
+                        choices=['val', 'test'],
+                        help='Split to evaluate when using --eval_only')
     parser.add_argument('--seed', type=int, default=42,
                         help='Random seed for reproducibility')
 
@@ -110,6 +119,18 @@ def get_model(args):
         )
     elif args.model == '3dcnn':
         model = CNN3D(num_classes=num_classes)
+    elif args.model == 'perframe3d':
+        model = PerFrame3D(
+            num_classes=num_classes,
+            clip_size=args.clip_size,
+            aggregation=args.aggregation
+        )
+    elif args.model == 'latefusion3d':
+        model = LateFusion3D(
+            num_classes=num_classes,
+            num_segments=args.num_segments,
+            fusion=args.fusion
+        )
     elif args.model == 'dualstream':
         model = DualStreamNetwork(
             num_classes=num_classes,
@@ -124,7 +145,7 @@ def get_model(args):
 
 
 def get_dataloaders(args):
-    """Create train and validation dataloaders."""
+    """Create train, validation, and test dataloaders."""
 
     # Data transforms
     train_transform = T.Compose([
@@ -143,7 +164,7 @@ def get_dataloaders(args):
 
     # Choose dataset based on model type
     if args.model == 'perframe':
-        # Use frame dataset for per-frame models
+        # Use frame dataset for per-frame 2D models
         train_dataset = FrameImageDataset(
             root_dir=args.root_dir,
             split='train',
@@ -154,8 +175,13 @@ def get_dataloaders(args):
             split='val',
             transform=val_transform
         )
+        test_dataset = FrameImageDataset(
+            root_dir=args.root_dir,
+            split='test',
+            transform=val_transform
+        )
     else:
-        # Use video dataset for other models
+        # Use video dataset for all other models (3D CNNs, fusion models, dual-stream)
         load_flow = (args.model == 'dualstream')
 
         train_dataset = FrameVideoDataset(
@@ -168,6 +194,13 @@ def get_dataloaders(args):
         val_dataset = FrameVideoDataset(
             root_dir=args.root_dir,
             split='val',
+            transform=val_transform,
+            stack_frames=True,
+            load_optical_flow=load_flow
+        )
+        test_dataset = FrameVideoDataset(
+            root_dir=args.root_dir,
+            split='test',
             transform=val_transform,
             stack_frames=True,
             load_optical_flow=load_flow
@@ -189,7 +222,15 @@ def get_dataloaders(args):
         pin_memory=True
     )
 
-    return train_loader, val_loader
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=args.batch_size,
+        shuffle=False,
+        num_workers=args.num_workers,
+        pin_memory=True
+    )
+
+    return train_loader, val_loader, test_loader
 
 
 def train_epoch(model, dataloader, criterion, optimizer, device, args):
@@ -322,13 +363,14 @@ def main():
         print(f"Resumed from epoch {start_epoch}")
 
     # Data loaders
-    train_loader, val_loader = get_dataloaders(args)
-    print(f"Train samples: {len(train_loader.dataset)}, Val samples: {len(val_loader.dataset)}")
+    train_loader, val_loader, test_loader = get_dataloaders(args)
+    print(f"Train samples: {len(train_loader.dataset)}, Val samples: {len(val_loader.dataset)}, Test samples: {len(test_loader.dataset)}")
 
     # Evaluation only
     if args.eval_only:
-        val_loss, val_acc = validate(model, val_loader, criterion, device, args)
-        print(f"Validation Loss: {val_loss:.4f}, Accuracy: {val_acc:.2f}%")
+        eval_loader = test_loader if args.eval_split == 'test' else val_loader
+        eval_loss, eval_acc = validate(model, eval_loader, criterion, device, args)
+        print(f"{args.eval_split.capitalize()} Loss: {eval_loss:.4f}, Accuracy: {eval_acc:.2f}%")
         return
 
     # Training loop
@@ -376,6 +418,45 @@ def main():
         json.dump(history, f, indent=4)
 
     print(f"\nTraining completed! Best validation accuracy: {best_acc:.2f}%")
+
+    # Test evaluation with best model
+    print("\n" + "="*50)
+    print("Evaluating on test set with best model...")
+    print("="*50)
+
+    # Load best checkpoint
+    best_checkpoint_path = os.path.join(args.checkpoint_dir, f'{args.model}_best.pth')
+    if os.path.exists(best_checkpoint_path):
+        print(f"Loading best checkpoint from {best_checkpoint_path}")
+        checkpoint = load_checkpoint(best_checkpoint_path)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print(f"Best checkpoint from epoch {checkpoint['epoch']} with val acc: {checkpoint['best_acc']:.2f}%")
+    else:
+        print("Warning: Best checkpoint not found, using final model")
+
+    # Evaluate on test set
+    test_loss, test_acc = validate(model, test_loader, criterion, device, args)
+    print(f"\nTest Loss: {test_loss:.4f}, Test Accuracy: {test_acc:.2f}%")
+
+    # Save test results
+    results = {
+        'best_val_acc': best_acc,
+        'test_loss': test_loss,
+        'test_acc': test_acc,
+        'model': args.model,
+        'backbone': args.backbone if hasattr(args, 'backbone') else None,
+        'num_frames': args.num_frames,
+        'batch_size': args.batch_size,
+        'epochs': args.epochs,
+        'lr': args.lr
+    }
+
+    results_path = os.path.join(args.checkpoint_dir, f'{args.model}_test_results.json')
+    with open(results_path, 'w') as f:
+        json.dump(results, f, indent=4)
+
+    print(f"\nTest results saved to: {results_path}")
+    print(f"Final Results - Val Acc: {best_acc:.2f}% | Test Acc: {test_acc:.2f}%")
 
 
 if __name__ == '__main__':

@@ -241,6 +241,199 @@ class CNN3D(nn.Module):
         return x
 
 
+class PerFrame3D(nn.Module):
+    """
+    Per-frame 3D CNN model: Process small temporal clips with 3D convolutions,
+    then aggregate predictions across clips.
+    """
+
+    def __init__(self, num_classes=10, clip_size=3, aggregation='mean'):
+        super().__init__()
+        self.clip_size = clip_size
+        self.aggregation = aggregation
+
+        # 3D CNN for processing small temporal clips
+        self.features = nn.Sequential(
+            # First 3D conv block
+            nn.Conv3d(3, 64, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(1, 2, 2), stride=(1, 2, 2)),
+
+            # Second 3D conv block
+            nn.Conv3d(64, 128, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(1, 2, 2), stride=(1, 2, 2)),
+
+            # Third 3D conv block
+            nn.Conv3d(128, 256, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(2, 2, 2), stride=(2, 2, 2)),
+        )
+
+        # Classifier for each clip
+        self.classifier = nn.Sequential(
+            nn.AdaptiveAvgPool3d((1, 1, 1)),
+            nn.Flatten(),
+            nn.Dropout(0.5),
+            nn.Linear(256, 128),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.3),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        """
+        Args:
+            x: Stacked frames [B, C, T, H, W]
+        """
+        B, C, T, H, W = x.shape
+
+        # Create overlapping clips
+        clips = []
+        for i in range(0, T - self.clip_size + 1):
+            clip = x[:, :, i:i+self.clip_size, :, :]  # [B, C, clip_size, H, W]
+            clips.append(clip)
+
+        if len(clips) == 0:
+            # If video is shorter than clip_size, pad it
+            clip = x
+            if T < self.clip_size:
+                padding = self.clip_size - T
+                clip = torch.nn.functional.pad(clip, (0, 0, 0, 0, 0, padding))
+            clips.append(clip)
+
+        # Process each clip
+        clip_outputs = []
+        for clip in clips:
+            features = self.features(clip)
+            output = self.classifier(features)
+            clip_outputs.append(output)
+
+        # Stack all clip predictions [B, num_clips, num_classes]
+        clip_outputs = torch.stack(clip_outputs, dim=1)
+
+        # Aggregate predictions
+        if self.aggregation == 'mean':
+            output = torch.mean(clip_outputs, dim=1)
+        elif self.aggregation == 'max':
+            output, _ = torch.max(clip_outputs, dim=1)
+        else:
+            raise ValueError(f"Unsupported aggregation: {self.aggregation}")
+
+        return output
+
+
+class LateFusion3D(nn.Module):
+    """
+    Late fusion 3D CNN model: Extract 3D spatiotemporal features from temporal segments,
+    then combine features before classification.
+    """
+
+    def __init__(self, num_classes=10, num_segments=3, fusion='concat'):
+        super().__init__()
+        self.num_segments = num_segments
+        self.fusion = fusion
+
+        # 3D CNN feature extractor - uses adaptive pooling to handle variable segment sizes
+        self.conv_blocks = nn.Sequential(
+            # First 3D conv block
+            nn.Conv3d(3, 64, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(1, 2, 2), stride=(1, 2, 2)),
+
+            # Second 3D conv block
+            nn.Conv3d(64, 128, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(1, 2, 2), stride=(1, 2, 2)),
+
+            # Third 3D conv block
+            nn.Conv3d(128, 256, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(1, 2, 2), stride=(1, 2, 2)),
+
+            # Fourth 3D conv block
+            nn.Conv3d(256, 512, kernel_size=(3, 3, 3), padding=(1, 1, 1)),
+            nn.BatchNorm3d(512),
+            nn.ReLU(inplace=True),
+            nn.MaxPool3d(kernel_size=(1, 2, 2), stride=(1, 2, 2)),
+        )
+
+        self.global_pool = nn.AdaptiveAvgPool3d((1, 1, 1))
+        self.flatten = nn.Flatten()
+
+        feature_dim = 512
+
+        # Classifier after fusion
+        if fusion == 'concat':
+            # Concatenate all segment features
+            self.classifier = nn.Sequential(
+                nn.Dropout(0.5),
+                nn.Linear(feature_dim * num_segments, 512),
+                nn.ReLU(),
+                nn.Dropout(0.3),
+                nn.Linear(512, num_classes)
+            )
+        elif fusion == 'mean':
+            self.classifier = nn.Sequential(
+                nn.Dropout(0.5),
+                nn.Linear(feature_dim, 256),
+                nn.ReLU(),
+                nn.Dropout(0.3),
+                nn.Linear(256, num_classes)
+            )
+        else:
+            raise ValueError(f"Unsupported fusion: {fusion}")
+
+    def forward(self, x):
+        """
+        Args:
+            x: Stacked frames [B, C, T, H, W]
+        """
+        B, C, T, H, W = x.shape
+
+        # Divide video into segments
+        segment_length = T // self.num_segments
+        if segment_length == 0:
+            segment_length = 1
+            num_segments = T
+        else:
+            num_segments = self.num_segments
+
+        segments = []
+        for i in range(num_segments):
+            start = i * segment_length
+            end = start + segment_length if i < num_segments - 1 else T
+            segment = x[:, :, start:end, :, :]
+            segments.append(segment)
+
+        # Extract features from each segment
+        segment_features = []
+        for segment in segments:
+            features = self.conv_blocks(segment)  # [B, 512, T', H', W']
+            features = self.global_pool(features)  # [B, 512, 1, 1, 1]
+            features = self.flatten(features)  # [B, 512]
+            segment_features.append(features)
+
+        # Stack features [B, num_segments, feature_dim]
+        segment_features = torch.stack(segment_features, dim=1)
+
+        # Fusion
+        if self.fusion == 'concat':
+            features = segment_features.view(B, -1)  # [B, num_segments * feature_dim]
+        elif self.fusion == 'mean':
+            features = torch.mean(segment_features, dim=1)  # [B, feature_dim]
+
+        # Classification
+        output = self.classifier(features)
+        return output
+
+
 class DualStreamNetwork(nn.Module):
     """
     Dual-stream (two-stream) network that processes RGB and optical flow separately,
@@ -337,6 +530,16 @@ if __name__ == "__main__":
 
     print("\nTesting CNN3D:")
     model = CNN3D(num_classes=10)
+    out = model(x)
+    print(f"Output shape: {out.shape}")
+
+    print("\nTesting PerFrame3D:")
+    model = PerFrame3D(num_classes=10, clip_size=3)
+    out = model(x)
+    print(f"Output shape: {out.shape}")
+
+    print("\nTesting LateFusion3D:")
+    model = LateFusion3D(num_classes=10, num_segments=3)
     out = model(x)
     print(f"Output shape: {out.shape}")
 
