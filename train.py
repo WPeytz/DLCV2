@@ -72,6 +72,27 @@ def make_worker_init_fn(base_seed: int):
     return _init_fn
 # --------------------------------------------------------------- #
 
+#   Dummy tqdm for silent epochs
+
+class DummyTqdm:
+    def __init__(self, iterable, **kwargs):
+        self.iterable = iterable
+    
+    def __iter__(self):
+        return iter(self.iterable)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+        
+    def set_postfix(self, *args, **kwargs):
+        # Essential fix: does nothing
+        pass
+
+#   --------------------------------------------------------------- #
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train video classification model')
@@ -387,8 +408,18 @@ def main():
     # Training loop
     history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
 
+    global tqdm
+    original_tqdm = tqdm  # Save original tqdm for later use
+
     for epoch in range(start_epoch, args.epochs):
-        print(f"\nEpoch {epoch + 1}/{args.epochs}")
+        is_print_epoch = (epoch + 1) % 5 == 0 or (epoch + 1) == args.epochs
+
+        if is_print_epoch:
+            print(f"\nEpoch {epoch + 1}/{args.epochs}")
+            tqdm = original_tqdm
+        else:
+            # Disable progress bar for silent epochs
+            tqdm = DummyTqdm
 
         # Train
         train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, device, args)
@@ -406,9 +437,10 @@ def main():
         history['val_acc'].append(val_acc)
 
         # Print epoch results
-        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
-        print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
-        print(f"Learning Rate: {optimizer.param_groups[0]['lr']:.6f}")
+        if is_print_epoch:
+            print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+            print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+            print(f"Learning Rate: {optimizer.param_groups[0]['lr']:.6f}")
 
         # Save checkpoint
         is_best = val_acc > best_acc
@@ -422,6 +454,9 @@ def main():
             'best_acc': best_acc,
             'args': vars(args)
         }, is_best, checkpoint_path, args.checkpoint_dir, args.model)
+
+        # Reset tqdm state for the next check
+        tqdm = original_tqdm
 
     # Save training history
     history_path = os.path.join(args.checkpoint_dir, f'{args.model}_history.json')
