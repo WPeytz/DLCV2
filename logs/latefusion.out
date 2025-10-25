@@ -1,0 +1,114 @@
+=== Job started on n-62-18-13 at Sat Oct 25 11:33:52 CEST 2025 ===
+Working directory: /zhome/69/b/220104/DLCV2
+PWD: /zhome/69/b/220104/DLCV2
+Python: /zhome/69/b/220104/caio_env/bin/python
+Python 3.9.19
+[sitecustomize] Global seed set to 42
+[seed] Using seed=42 deterministic=False
+Using device: cuda
+Dataset: UFC10 Leakage
+Model: latefusion
+Train samples: 500, Val samples: 120
+
+Epoch 5/100
+Train Loss: 0.7595, Train Acc: 74.80%
+Val Loss: 1.1160, Val Acc: 67.50%
+Learning Rate: 0.001000
+
+Epoch 10/100
+Train Loss: 0.4376, Train Acc: 86.00%
+Val Loss: 1.3875, Val Acc: 65.83%
+Learning Rate: 0.001000
+
+Epoch 15/100
+Train Loss: 0.1776, Train Acc: 93.80%
+Val Loss: 0.4754, Val Acc: 88.33%
+Learning Rate: 0.001000
+
+Epoch 20/100
+Train Loss: 0.0529, Train Acc: 98.80%
+Val Loss: 0.2068, Val Acc: 93.33%
+Learning Rate: 0.000500
+
+Epoch 25/100
+Train Loss: 0.0138, Train Acc: 100.00%
+Val Loss: 0.1689, Val Acc: 95.00%
+Learning Rate: 0.000500
+
+Epoch 30/100
+Train Loss: 0.0151, Train Acc: 99.60%
+Val Loss: 0.2073, Val Acc: 93.33%
+Learning Rate: 0.000250
+
+Epoch 35/100
+Train Loss: 0.0160, Train Acc: 99.40%
+Val Loss: 0.2106, Val Acc: 92.50%
+Learning Rate: 0.000125
+
+Epoch 40/100
+Train Loss: 0.0146, Train Acc: 99.80%
+Val Loss: 0.1872, Val Acc: 94.17%
+Learning Rate: 0.000063
+
+Epoch 45/100
+Train Loss: 0.0039, Train Acc: 100.00%
+Val Loss: 0.2029, Val Acc: 93.33%
+Learning Rate: 0.000031
+
+Epoch 50/100
+Train Loss: 0.0041, Train Acc: 100.00%
+Val Loss: 0.1732, Val Acc: 95.00%
+Learning Rate: 0.000031
+
+Epoch 55/100
+Train Loss: 0.0032, Train Acc: 100.00%
+Val Loss: 0.1851, Val Acc: 94.17%
+Learning Rate: 0.000016
+
+Epoch 60/100
+Train Loss: 0.0063, Train Acc: 100.00%
+Val Loss: 0.1796, Val Acc: 94.17%
+Learning Rate: 0.000008
+
+Epoch 65/100
+Train Loss: 0.0033, Train Acc: 100.00%
+Val Loss: 0.2000, Val Acc: 93.33%
+Learning Rate: 0.000004
+
+Epoch 70/100
+Train Loss: 0.0100, Train Acc: 99.80%
+Val Loss: 0.2049, Val Acc: 93.33%
+Learning Rate: 0.000002
+
+Epoch 75/100
+Train Loss: 0.0105, Train Acc: 100.00%
+Val Loss: 0.1872, Val Acc: 95.83%
+Learning Rate: 0.000002
+
+Epoch 80/100
+Train Loss: 0.0038, Train Acc: 100.00%
+Val Loss: 0.1880, Val Acc: 95.00%
+Learning Rate: 0.000001
+
+Epoch 85/100
+Train Loss: 0.0043, Train Acc: 100.00%
+Val Loss: 0.1804, Val Acc: 95.00%
+Learning Rate: 0.000000
+
+Epoch 90/100
+Train Loss: 0.0073, Train Acc: 99.80%
+Val Loss: 0.1931, Val Acc: 92.50%
+Learning Rate: 0.000000
+
+Epoch 95/100
+Train Loss: 0.0050, Train Acc: 100.00%
+Val Loss: 0.1967, Val Acc: 92.50%
+Learning Rate: 0.000000
+
+Epoch 100/100
+Train Loss: 0.0032, Train Acc: 100.00%
+Val Loss: 0.1961, Val Acc: 94.17%
+Learning Rate: 0.000000
+
+Training completed! Best validation accuracy: 95.83%
+=== Job finished at Sat Oct 25 12:02:27 CEST 2025 ===
